@@ -1,0 +1,84 @@
+## A simple ACT-R Device
+
+import actr
+
+COLORS = ("red", "blue", "green")
+
+COLOR_MAPPINGS = {"red" : "j",
+                  "blue" : "k",
+                  "green" : "l"}
+
+class StroopStimulus:
+    """An astract Stroop task stimulus"""
+    def __init__(word, color):
+        if color in COLORS:
+            self.word = word
+            self.color = color
+
+
+    @property
+    def word(self):
+        return self._word
+
+    @word.setter
+    def word(self, val):
+        self._word = val
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def word(self, val):
+        self._color = val
+
+    @property
+    def congruent(self):
+        if self.color in COLORS and self.word == self.color:
+            return True
+        else:
+            return False
+
+    @property
+    def incongruent(self):
+        if self.color in COLORS and self.word in COLORS and self.color is not self.word:
+            return True
+        else:
+            return False
+
+    @property
+    def neutral(self):
+        if self.color in COLORS and self.word not in COLORS:
+            return True
+        else:
+            return False
+
+    
+            
+class Stroop:
+    """An abstract Stroop task"""
+    def __init__(self, stimuli=[]):
+        self._stimuli = stimili
+        self.setup()
+        
+    pass
+
+            
+    
+def run_experiment(model_name):
+    win = actr.open_exp_window("* STROOP TASK *", width=800, height = 600)
+
+    task = Stroop()
+    
+    actr.install_device(win)
+    
+    actr.start_hand_at_mouse()
+    
+    actr.add_image_to_exp_window(win, "logo", "smalllogo.gif", x=10, y=10, width=288, height=142)
+    
+    actr.add_items_to_exp_window(win, actr.create_image_for_exp_window(win, "brain", "ref-brain.gif", x=10, y=160, width=128, height=128, action="click-brain-py"))
+    
+    actr.add_image_to_exp_window(win, "brain-2", "ref-brain.gif", x=10, y=290, width=128, height=128, action=["click-brain-2-py","this string"])
+    win = actr.open_exp_window("Simon experiment", width=600, height = 400)
+
+    
