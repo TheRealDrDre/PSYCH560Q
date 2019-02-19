@@ -29,7 +29,7 @@ the following actions:
    middle ("k") or the ring finger ("l").
    
 4. If the model is looking at a black word that reads "done", it 
-   stops ACT-R using the `!stop` command.
+   stops ACT-R using the `!stop!` command.
 
 ## How to run the code
 
@@ -51,7 +51,7 @@ ACT-R connection has been started.
    163.905   PROCEDURAL             CLEAR-BUFFER VISUAL
    163.905   ------                 BREAK-EVENT Stopped by !stop!
 --------------------------------------------------------------------------------
-congruent : Accuracy = 0.27, Response Times = 353.41
-neutral : Accuracy = 0.26, Response Times = 403.10
-incongruent : Accuracy = 0.33, Response Times = 330.97
+congruent (N=42): Accuracy = 0.33, Response Times = 329.88 ms
+neutral (N=42): Accuracy = 0.34, Response Times = 417.32 ms
+incongruent (N=36): Accuracy = 0.31, Response Times = 329.31 ms
 ```
