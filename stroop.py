@@ -217,10 +217,11 @@ class StroopTask:
         elif self.phase == "stimulus":
             self.current_trial.offset = actr.mp_time()
             self.index += 1
+            self.log.append(self.current_trial)
             if self.index >= len(self.stimuli):
                 self.phase = "done"
+
             else:
-                self.log.append(self.current_trial)
                 self.current_trial = StroopTrial(self.stimuli[self.index])
                 self.phase = "fixation"
                 actr.schedule_event_relative(1, "stroop-next")
@@ -251,20 +252,19 @@ def run_experiment(model_name="response-monkey.lisp", time=200):
     actr.monitor_command("output-key",
                          "stroop-accept-response")
 
-    #task.window=win
-
     task.setup(win)
     actr.run(time)
     print("-" * 80)
     task.print_stats(task.run_stats())
 
-    # Clean-up interface
+    # Clean-up the interface
+    # (Removes all the links between ACT-R and this object).
 
     actr.remove_command_monitor("output-key",
                                 "stroop-accept-response")
     actr.remove_command("stroop-next")
     actr.remove_command("stroop-update-window")
     
-    # Returns task for further analysis of data
+    # Returns the task as a Python object for further analysis of data
     return task
      
