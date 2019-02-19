@@ -129,9 +129,9 @@ class StroopTask:
             self.setup()
 
         
-    def setup(self):
+    def setup(self, win=None):
         """Sets up and prepares for first trial"""
-        self.window = None
+        self.window = win
         self.index = 0
         self.log = []
         self.phase = "fixation"
@@ -154,16 +154,17 @@ class StroopTask:
                     acc = sum([x.accuracy for x in data]) / len(data)
                     rt = sum([x.response_time for x in data]) / len(data)
                     
-                    R[cond] = (acc, rt)
+                    R[cond] = (len(data), acc, rt)
             
             return R
 
 
     def print_stats(self, stats={}):
+        """Pretty prints stats about the experiment"""
         for cond in stats.keys():
-            acc, rt = stats[cond]
-            print("%s : Accuracy = %.2f, Response Times = %.2f" % \
-                  (cond, acc, rt * 1000))
+            n, acc, rt = stats[cond]
+            print("%s (N=%d): Accuracy = %.2f, Response Times = %.2f ms" % \
+                  (cond, n, acc, rt * 1000))
 
             
     def update_window(self):
@@ -227,7 +228,7 @@ class StroopTask:
         actr.schedule_event_now("stroop-update-window")
 
 
-def run_experiment(model_name="response-monkey.lisp", time=1000):
+def run_experiment(model_name="response-monkey.lisp", time=200):
     """Runs an experiment"""
     actr.reset()
     actr.load_act_r_model(model_name)
@@ -238,7 +239,7 @@ def run_experiment(model_name="response-monkey.lisp", time=1000):
     actr.install_device(win)
 
     task = StroopTask()
-    task.window = win
+    #task.window = win
 
     actr.add_command("stroop-next", task.next,
                      "Updates the internal task")
@@ -249,11 +250,21 @@ def run_experiment(model_name="response-monkey.lisp", time=1000):
 
     actr.monitor_command("output-key",
                          "stroop-accept-response")
-    
+
+    #task.window=win
+
+    task.setup(win)
     actr.run(time)
     print("-" * 80)
     task.print_stats(task.run_stats())
 
+    # Clean-up interface
+
+    actr.remove_command_monitor("output-key",
+                                "stroop-accept-response")
+    actr.remove_command("stroop-next")
+    actr.remove_command("stroop-update-window")
+    
     # Returns task for further analysis of data
     return task
      
