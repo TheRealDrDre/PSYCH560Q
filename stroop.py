@@ -107,11 +107,13 @@ def generate_stimuli(shuffle = True):
 class StroopTask:
     """An abstract Stroop task"""
     def __init__(self, stimuli=generate_stimuli()):
-        self.stimuli = stimuli
-        self.setup()
+        if len(stimuli) > 0:
+            self.stimuli = stimuli
+            self.setup()
 
         
     def setup(self):
+        """Sets up and prepares for first trial"""
         self.index = 0
         self.log = []
         self.phase = "fixation"
@@ -128,54 +130,54 @@ class StroopTask:
             
     def update_window(self):
         """Updates the experiment window"""
-
+        print("Updating window")
         # First, clean-up
         global WINDOW
         global WINDOW_ITEMS
-        
-        for item in WINDOW_ITEMS:
-            actr.remove_items_from_exp_window(WINDOW, item)
-            WINDOW_ITEMS.remove(item)
 
+        actr.clear_exp_window()
+
+        # Add new elements
         if self.phase == "fixation":
             item = actr.add_text_to_exp_window(WINDOW, "+", x = 400, y = 300,
                                                color = "black")
-            WINDOW_ITEMS.append(item)
+            #WINDOW_ITEMS.append(item)
 
         elif self.phase == "stimulus":
             color = self.current_trial.color
             word = self.current_trial.word
             item = actr.add_text_to_exp_window(WINDOW, word, x=400, y= 300,
                                                color = color)
-            WINDOW_ITEMS.append(item)
+            #WINDOW_ITEMS.append(item)
 
             for i, col in enumerate(COLOR_MAPPINGS):
                 item = actr.add_text_to_exp_window(WINDOW, COLOR_MAPPINGS[col],
                                                    x = 600 + i * 50,
                                                    y = 500,
                                                    color = col)
-                WINDOW_ITEMS.append(item)
+                #WINDOW_ITEMS.append(item)
 
         elif self.phase == "done":
             color = self.current_trial.color
             word = self.current_trial.word
             item = actr.add_text_to_exp_window(WINDOW, "done", x=400, y= 300,
                                                color = "black")
-            WINDOW_ITEMS.append(item)
+            #WINDOW_ITEMS.append(item)
 
 
-    def accept_response(self, response):
+    def accept_response(self, model, response):
         """A valid response is a key pressed during the 'stimulus' phase"""
+        print("Accepting response: %s" % (response))
         if self.phase == "stimulus":
             self.current_trial.response = response
             actr.schedule_event_now("stroop-next")
 
             
     def next(self):
+        """Moves on in th task progression"""
         if self.phase == "fixation":
             self.phase = "stimulus"
             self.current_trial.onset = actr.mp_time()
-            #actr.schedule_event_relative(1, "stroop-next")
 
         elif self.phase == "stimulus":
             self.current_trial.offset = actr.mp_time()
@@ -188,7 +190,7 @@ class StroopTask:
                 self.phase = "fixation"
                 actr.schedule_event_relative(1, "stroop-next")
 
-        self.update_window()
+        actr.schedule_event_now("stroop-update-window")
 
         
 WINDOW = None
@@ -196,7 +198,7 @@ WINDOW_ITEMS = []
 
 
 
-def run_experiment(model_name="response-monkey.lisp"):
+def run_experiment(model_name="response-monkey.lisp", time=10):
     global WINDOW
     actr.load_act_r_model(model_name)
 
@@ -209,11 +211,14 @@ def run_experiment(model_name="response-monkey.lisp"):
 
     actr.add_command("stroop-next", task.next,
                      "Updates the internal task")
+    actr.add_command("stroop-update-window", task.update_window,
+                     "Updates the window")
     actr.add_command("stroop-accept-response", task.accept_response,
                      "Accepts a response for the Stroop task")
 
-    actr.monitor_command("output-key","stroop-accept-response")
-    actr.run(10)
+    actr.monitor_command("output-key", "stroop-accept-response")
+    
+    actr.run(time)
     print("-" * 80)
     task.run_stats()
      
