@@ -9,8 +9,26 @@ a skeleton for a model.
 The device is written in Python using the new, JSON-RPC based
 interface for ACT-R 9 (currently in beta, coded as 7.6 or 7.x).
 
-The device implements the version of the Stroop task used by
-Tim Verstynen in his 2014 paper.
+The device implements the version of the Stroop task used by Tim
+Verstynen in his 2014 paper. In this version of the Stroop, words
+appear in one of three colors (red, blue, and green), and the
+responses are given by pressing one of three corresponding keys with
+the right hand (index = red, middle = blue, ring = green). The task is
+made of 120 trials: 42 congruent, 42 neutral, and 36 incongruent.
+
+### Device implementation
+
+The device is implemented as a Python object (`StroopTask`) that
+controls an ACT-R experimental window. The experimental window is
+ACT-R's predefined proxy for a screen, and comes with native support
+to translated GUI elements (text, images, buttons, and lines) into a
+predefined set of ACT-R chunks.
+
+If ACT-R's Environment has been started, the window will be physically
+visible, with the stimuli appearing in order. If ACT-R is running
+without the Environment, the window will be hidden from the user (but
+still visible for the model).
+
 
 ## Model
 
