@@ -1,6 +1,8 @@
-;;=======================================================
-;; Response monkey
-;;=================
+;;; ======================================================================== ;;;
+;;; Response monkey
+;;; ======================================================================== ;;;
+;;; Does nothing, except randomly responding to the stimuli.
+;;; ======================================================================== ;;;
 
 (clear-all)
 
@@ -17,7 +19,8 @@
 			representation
 			string)
 
-;; Chunks 
+;;; ===  CHUNKS ============================================================ ;;;
+
 (add-dm (answer isa chunk)
 		(answer-red   isa stroop-answer
                       kind answer
@@ -33,9 +36,10 @@
                       string "blue"))
 
 
-;; Productions 
-(p view-stim
-   "Views stimulus"
+;;; === Productions ======================================================== ;;;
+
+(p check-the-screen
+   "Checks whatever is on the screen"
    ?visual>
      state          free
      buffer         empty
@@ -54,7 +58,7 @@
 )
 
 (p recover-from-error
-   "Views stimulus"
+   "If a encoding went wrong, recover from it"
    ?visual>
      state          error
 
@@ -69,9 +73,10 @@
 )
 
 (p ignore-fixation
-   "Views stimulus"
+   "If we are looking at the fixation cross, discard"
    =visual>
      text t
+     value "+"
      color black
 
    ?visual>
@@ -84,6 +89,8 @@
 ==>
    -visual>
 )
+
+;;; --- Random Responses --------------------------------------------------- ;;;
 
 (p respond-index
    "Responds randomly"
@@ -144,5 +151,25 @@
    -visual>
 )
 
+;;; --- DONE! -------------------------------------------------------------- ;;;
 
+(p done
+   "Detects when the experiment is done"
+   =visual>
+     text t
+     value "done"
+     color black
+
+   ?visual>
+     state free
+	 
+   ?manual>
+     preparation free
+     processor free
+     execution free	 
+==>
+   !stop!
 )
+
+
+) ;; End of model

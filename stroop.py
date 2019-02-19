@@ -1,4 +1,14 @@
-## A simple ACT-R Device
+## ================================================================ ##
+## STROOP.PY                                                        ##
+## ================================================================ ##
+## A simple ACT-R device for the Stroop task                        ##
+## -----------------------------------------                        ##
+## This is a device that showcases the unique capacities of the new ##
+## JSON-RPC-based ACT-R interface. The device is written in Python, ##
+## and interacts with ACT-R entirely through Python code.           ##
+## The Stroop task is modeled after Tim Verstynen's (2014)          ##
+## neuroimaging paper on the Stroop task.                           ##
+## ================================================================ ##
 
 import actr
 import random
@@ -13,7 +23,7 @@ COLOR_MAPPINGS = {"red" : "j",
 
 
 class StroopStimulus:
-    """An astract Stroop task stimulus"""
+    """An abstract Stroop task stimulus"""
     def __init__(self, word, color):
         if color in COLORS:
             self.word = word
@@ -44,7 +54,8 @@ class StroopStimulus:
 
     @property
     def incongruent(self):
-        if self.color in COLORS and self.word in COLORS and self.color is not self.word:
+        if self.color in COLORS and self.word in COLORS and \
+           self.color is not self.word:
             return True
         else:
             return False
@@ -62,10 +73,11 @@ class StroopStimulus:
     def __repr__(self):
         return self.__str__()
 
-    
+
 class StroopTrial:
     """A class for recording a Stroop trial"""
     def __init__(self, stimulus):
+        """Inits a stroop trial"""
         self.stimulus = stimulus
         self.setup()
 
@@ -73,17 +85,21 @@ class StroopTrial:
         "Sets up properly"
         self.color = self.stimulus.color
         self.word = self.stimulus.word
-        self.correct_response  = None
         self.onset = 0.0
         self.offset = 0.0
         self.response = None
 
     @property
+    def correct_response(self):
+        return COLOR_MAPPINGS[self.color]
+        
+    @property
     def accuracy(self):
-        if self.response is not None and self.response == self.correct_response:
-            return 0.0
-        else:
+        if self.response is not None and \
+           self.response == self.correct_response:
             return 1.0
+        else:
+            return 0.0
 
     @property
     def response_time(self):
@@ -98,15 +114,16 @@ def generate_stimuli(shuffle = True):
 
     lst = congr * 14 + neutr * 7 + incongr * 6
 
-    if shuffle:
+    if shuffle:  # Randomized if needed
         random.shuffle(lst)
     
     return [StroopStimulus(word = x[0], color = x[1]) for x in lst]
 
 
 class StroopTask:
-    """An abstract Stroop task"""
+    """A simple version of the Stroop task"""
     def __init__(self, stimuli=generate_stimuli()):
+        """Initializes a Stroop task (if there are stimuli)""" 
         if len(stimuli) > 0:
             self.stimuli = stimuli
             self.setup()
@@ -114,6 +131,7 @@ class StroopTask:
         
     def setup(self):
         """Sets up and prepares for first trial"""
+        self.window = None
         self.index = 0
         self.log = []
         self.phase = "fixation"
@@ -123,51 +141,67 @@ class StroopTask:
 
         
     def run_stats(self):
+        """Runs some basic analysis"""
         if len(self.log) > 0:
-            print(sum([x.accuracy for x in self.log])/len(self.log))
-            print(sum([x.response_time for x in self.log])/len(self.log))
+            cong = [x for x in self.log if x.stimulus.congruent]
+            incn = [x for x in self.log if x.stimulus.incongruent]
+            neut = [x for x in self.log if x.stimulus.neutral]
+
+            R = {}
+            for cond, data in zip(["congruent", "neutral", "incongruent"],
+                                  [cong, neut, incn]):
+                if len(data) > 0:
+                    acc = sum([x.accuracy for x in data]) / len(data)
+                    rt = sum([x.response_time for x in data]) / len(data)
+                    
+                    R[cond] = (acc, rt)
+            
+            return R
+
+
+    def print_stats(self, stats={}):
+        for cond in stats.keys():
+            acc, rt = stats[cond]
+            print("%s : Accuracy = %.2f, Response Times = %.2f" % \
+                  (cond, acc, rt * 1000))
 
             
     def update_window(self):
         """Updates the experiment window"""
-        print("Updating window")
-        # First, clean-up
-        global WINDOW
-        global WINDOW_ITEMS
+        if self.window is not None:
+            # First, clean-up
+            actr.clear_exp_window()
 
-        actr.clear_exp_window()
+            # Then, add new elements
+            if self.phase == "fixation":
+                item = actr.add_text_to_exp_window(self.window, "+",
+                                                   x = 400, y = 300,
+                                                   color = "black")
+            
+            elif self.phase == "stimulus":
+                color = self.current_trial.color
+                word = self.current_trial.word
+                item = actr.add_text_to_exp_window(self.window, word,
+                                                   x=400, y= 300,
+                                                   color = color)
 
-        # Add new elements
-        if self.phase == "fixation":
-            item = actr.add_text_to_exp_window(WINDOW, "+", x = 400, y = 300,
-                                               color = "black")
-            #WINDOW_ITEMS.append(item)
+                for i, col in enumerate(COLOR_MAPPINGS):
+                    item = actr.add_text_to_exp_window(self.window,
+                                                       COLOR_MAPPINGS[col],
+                                                       x = 600 + i * 50,
+                                                       y = 500,
+                                                       color = col)
 
-        elif self.phase == "stimulus":
-            color = self.current_trial.color
-            word = self.current_trial.word
-            item = actr.add_text_to_exp_window(WINDOW, word, x=400, y= 300,
-                                               color = color)
-            #WINDOW_ITEMS.append(item)
+            elif self.phase == "done":
+                color = self.current_trial.color
+                word = self.current_trial.word
+                item = actr.add_text_to_exp_window(self.window, "done",
+                                                   x=400, y= 300,
+                                                   color = "black")
 
-            for i, col in enumerate(COLOR_MAPPINGS):
-                item = actr.add_text_to_exp_window(WINDOW, COLOR_MAPPINGS[col],
-                                                   x = 600 + i * 50,
-                                                   y = 500,
-                                                   color = col)
-                #WINDOW_ITEMS.append(item)
-
-        elif self.phase == "done":
-            color = self.current_trial.color
-            word = self.current_trial.word
-            item = actr.add_text_to_exp_window(WINDOW, "done", x=400, y= 300,
-                                               color = "black")
-            #WINDOW_ITEMS.append(item)
-
-
+                
     def accept_response(self, model, response):
         """A valid response is a key pressed during the 'stimulus' phase"""
-        print("Accepting response: %s" % (response))
         if self.phase == "stimulus":
             self.current_trial.response = response
             actr.schedule_event_now("stroop-next")
@@ -192,22 +226,19 @@ class StroopTask:
 
         actr.schedule_event_now("stroop-update-window")
 
-        
-WINDOW = None
-WINDOW_ITEMS = []
 
-
-
-def run_experiment(model_name="response-monkey.lisp", time=10):
-    global WINDOW
+def run_experiment(model_name="response-monkey.lisp", time=1000):
+    """Runs an experiment"""
+    actr.reset()
     actr.load_act_r_model(model_name)
 
-    WINDOW = actr.open_exp_window("* STROOP TASK *", width = 800,
-                                  height = 600)
+    win = actr.open_exp_window("* STROOP TASK *", width = 800,
+                               height = 600)
 
-    actr.install_device(WINDOW)
+    actr.install_device(win)
 
     task = StroopTask()
+    task.window = win
 
     actr.add_command("stroop-next", task.next,
                      "Updates the internal task")
@@ -216,9 +247,13 @@ def run_experiment(model_name="response-monkey.lisp", time=10):
     actr.add_command("stroop-accept-response", task.accept_response,
                      "Accepts a response for the Stroop task")
 
-    actr.monitor_command("output-key", "stroop-accept-response")
+    actr.monitor_command("output-key",
+                         "stroop-accept-response")
     
     actr.run(time)
     print("-" * 80)
-    task.run_stats()
+    task.print_stats(task.run_stats())
+
+    # Returns task for further analysis of data
+    return task
      
