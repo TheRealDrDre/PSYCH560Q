@@ -10,6 +10,7 @@
 ## neuroimaging paper on the Stroop task.                           ##
 ## ================================================================ ##
 
+import os
 import actr
 import random
 
@@ -232,7 +233,9 @@ class StroopTask:
 def run_experiment(model_name="response-monkey.lisp", time=200):
     """Runs an experiment"""
     actr.reset()
-    actr.load_act_r_model(model_name)
+    # current directory
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+    actr.load_act_r_model(os.path.join(curr_dir, model_name))
 
     win = actr.open_exp_window("* STROOP TASK *", width = 800,
                                height = 600)
