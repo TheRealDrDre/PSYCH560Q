@@ -1,0 +1,8 @@
+# cache
+*__pycache__
+
+# vim temp file
+*.swp
+
+# emacs temp file
+*~
