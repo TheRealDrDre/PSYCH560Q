@@ -14,26 +14,8 @@
      )
 
 
-(chunk-type stroop-answer
-			kind
-			representation
-			string)
-
 ;;; ===  CHUNKS ============================================================ ;;;
 
-(add-dm (answer isa chunk)
-		(answer-red   isa stroop-answer
-                      kind answer
-                      representation red
-                      string "red")
-        (answer-green isa stroop-answer
-                      kind answer
-                      representation green
-                      string "green")
-        (answer-blue  isa stroop-answer
-                      kind answer
-                      representation blue
-                      string "blue"))
 
 
 ;;; === Productions ======================================================== ;;;
