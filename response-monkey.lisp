@@ -54,6 +54,7 @@
      screen-y       lowest
 )
 
+#|
 (p ignore-fixation
    "If we are looking at the fixation cross, discard"
    =visual>
@@ -71,6 +72,7 @@
 ==>
    -visual>
 )
+|#
 
 ;;; --- Random Responses --------------------------------------------------- ;;;
 

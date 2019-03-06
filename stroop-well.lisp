@@ -25,11 +25,12 @@
 						 concept blue
 						 name "blue")
 		(red-color-name isa color-name
-						 concept red
-						 name "red")
+						concept red
+						name "red")
 		(green-color-name isa color-name
 						  concept green
 						  name "green"))
+
 
 
 ;;; === Productions ======================================================== ;;;
@@ -68,63 +69,45 @@
      screen-y       lowest
 )
 
-(p ignore-fixation
-   "If we are looking at the fixation cross, discard"
+;;; --- Retrieve color name -------------------------------
+
+(p retrieve-color-name
+   "Retrieves the name of a color"
    =visual>
      text t
-     value "+"
-     color black
+   - color black
+     color =COLOR	 
 
-   ?visual>
-     state free
-	 
    ?manual>
      preparation free
      processor free
-     execution free	 
+     execution free
+
+   ?retrieval>
+     state free
+     buffer empty
+
+   ?visual>
+     state free	  
 ==>
-   -visual>
+   =visual>   
+
+   +retrieval>
+     isa color-name
+     concept =COLOR
 )
 
-;;; --- Random Responses --------------------------------------------------- ;;;
+;;; --- Respond based on color name ------------------------------ ;;;
 
-(p retrieve-color-name
-   =visual>
-     text t
-   - color black
-     color =COLOR	 
-
-   ?retrieval>
-     state free
-     buffer empty
-==>
-   +retrieval>
-     isa color-name
-     concept =COLOR)
-
-(p retrieve-color-name
-   =visual>
-     text t
-   - color black
-     color =COLOR	 
-
-   ?retrieval>
-     state free
-     buffer empty
-==>
-   +retrieval>
-     isa color-name
-     concept =COLOR)
-
-(p respond-green
-   "Responds to green"
+(p respond-red
+   "Responds to red"
    =visual>
      text t
    - color black
 
    =retrieval>
      isa color-name
-     name green
+     name "red"
 
    ?manual>
      preparation free
@@ -135,16 +118,20 @@
      cmd punch
 	 hand right
      finger index
-
-   -visual>
+   -retrieval>
+   -visual>	 
 )
 
-(p respond-middle
-   "Responds randomly"
+(p respond-blue
+   "Responds 'BLUE'"
    =visual>
      text t
    - color black
 
+   =retrieval>
+     isa color-name
+     name "blue"
+   
    ?manual>
      preparation free
      processor free
@@ -154,18 +141,22 @@
      cmd punch
 	 hand right
      finger middle
-
-   -visual>
+   -retrieval>
+   -visual>	 
 )
 
 
 
-(p respond-ring
+(p respond-green
    "Responds randomly"
    =visual>
      text t
    - color black
-	 
+
+   =retrieval>
+     isa color-name
+     name "green"
+   
    ?manual>
      preparation free
      processor free
@@ -175,8 +166,8 @@
      cmd punch
 	 hand right
      finger ring
-
-   -visual>
+   -retrieval>
+   -visual>	 
 )
 
 ;;; --- DONE! -------------------------------------------------------------- ;;;

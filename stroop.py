@@ -184,7 +184,7 @@ class StroopTask:
                 color = self.current_trial.color
                 word = self.current_trial.word
                 item = actr.add_text_to_exp_window(self.window, word,
-                                                   x=400, y= 300,
+                                                   x=395, y= 300,
                                                    color = color)
 
                 for i, col in enumerate(COLOR_MAPPINGS):
