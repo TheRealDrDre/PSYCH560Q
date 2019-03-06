@@ -14,7 +14,6 @@
      )
 
 
-
 (chunk-type color-name
 		    concept
 			name)
@@ -54,20 +53,6 @@
      screen-y       lowest
 )
 
-(p recover-from-error
-   "If a encoding went wrong, recover from it"
-   ?visual>
-     state          error
-
-   ?manual>
-     preparation free
-     processor free
-     execution free	 
-==>
-   +visual-location>
-     kind           text
-     screen-y       lowest
-)
 
 ;;; --- Retrieve color name -------------------------------
 
