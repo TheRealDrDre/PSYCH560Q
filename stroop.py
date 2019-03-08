@@ -123,11 +123,12 @@ def generate_stimuli(shuffle = True):
 
 class StroopTask:
     """A simple version of the Stroop task"""
-    def __init__(self, stimuli=generate_stimuli()):
+    def __init__(self, stimuli=generate_stimuli(), setup=False):
         """Initializes a Stroop task (if there are stimuli)""" 
         if len(stimuli) > 0:
             self.stimuli = stimuli
-            self.setup()
+            if setup:
+                self.setup()
 
         
     def setup(self, win=None):
@@ -230,7 +231,7 @@ class StroopTask:
         actr.schedule_event_now("stroop-update-window")
 
 
-def run_experiment(model_name="response-monkey.lisp", time=200):
+def run_experiment(model_name="response-monkey.lisp", time=200, verbose=True):
     """Runs an experiment"""
     actr.reset()
     # current directory
@@ -242,7 +243,7 @@ def run_experiment(model_name="response-monkey.lisp", time=200):
 
     actr.install_device(win)
 
-    task = StroopTask()
+    task = StroopTask(setup=False)
     #task.window = win
 
     actr.add_command("stroop-next", task.next,
@@ -257,16 +258,18 @@ def run_experiment(model_name="response-monkey.lisp", time=200):
 
     task.setup(win)
     actr.run(time)
-    print("-" * 80)
-    task.print_stats(task.run_stats())
+    if verbose:
+        print("-" * 80)
+        task.print_stats(task.run_stats())
 
-    # Clean-up the interface
+    # Cleans up the interface
     # (Removes all the links between ACT-R and this object).
 
     actr.remove_command_monitor("output-key",
                                 "stroop-accept-response")
     actr.remove_command("stroop-next")
     actr.remove_command("stroop-update-window")
+    actr.remove_command("stroop-accept-response")
     
     # Returns the task as a Python object for further analysis of data
     return task

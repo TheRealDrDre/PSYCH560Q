@@ -6,11 +6,12 @@
 
 (clear-all)
 
-(define-model stroop-model
+(define-model stroop-model-jim
 
 (sgp :esc nil
 	 :er t
 	 :auto-attend t
+	 :v nil
      )
 
 
