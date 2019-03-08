@@ -8,38 +8,27 @@
 
 (define-model stroop-model
 
-(sgp :esc t
+(sgp :esc nil
 	 :er t
-	 :visual-activation 3.0
-	 :mas 3.0
-	 :blc 1000.0
 	 :auto-attend t
      )
 
 
 (chunk-type color-name
-			kind
 		    concept
 			name)
 
 ;;; ===  CHUNKS ============================================================ ;;;
 
 (add-dm (blue-color-name isa color-name
-						 kind color-name
 						 concept blue
 						 name "blue")
 		(red-color-name isa color-name
-						kind color-name
 						concept red
 						name "red")
 		(green-color-name isa color-name
-						  kind color-name
 						  concept green
 						  name "green"))
-
-(add-sji (green green-color-name 1.0)
-		 (red red-color-name 1.0)
-		 (blue blue-color-name 1.0))
 
 
 
@@ -65,15 +54,14 @@
 )
 
 
-;;; --- Focus on color and retrieve color name -------------------------------
-
-
+;;; --- Retrieve color name -------------------------------
 
 (p retrieve-color-name
    "Retrieves the name of a color"
    =visual>
      text t
    - color black
+     value =NAME	 
      color =COLOR	 
 
    ?manual>
@@ -91,11 +79,32 @@
    =visual>   
 
    +retrieval>
-     kind color-name
-     ;concept =COLOR
+     isa color-name
+     name =NAME
+     concept =COLOR
 )
 
 ;;; --- Respond based on color name ------------------------------ ;;;
+
+(p check-retrieval-error
+   =visual>
+     text t
+     color =COLOR
+   - color black
+
+   ?retrieval>
+      state error
+
+   ?manual>
+     preparation free
+     processor free
+     execution free
+ ==>
+   =visual>	 
+   +retrieval>
+     isa color-name
+     concept =COLOR
+	 )
 
 (p respond-red
    "Responds to red"
