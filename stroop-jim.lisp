@@ -8,7 +8,7 @@
 
 (define-model stroop-model-jim
 
-(sgp :esc nil
+(sgp :esc t
 	 :er t
 	 :auto-attend t
 	 :v nil

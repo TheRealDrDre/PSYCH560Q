@@ -13,8 +13,10 @@
 import os
 import actr
 import random
+import numpy as np
 
 COLORS = ("red", "blue", "green")
+CONDITIONS = ("congruent", "neutral", "incongruent")
 
 NAMES = ("chair", "table")
 
@@ -150,7 +152,7 @@ class StroopTask:
             neut = [x for x in self.log if x.stimulus.neutral]
 
             R = {}
-            for cond, data in zip(["congruent", "neutral", "incongruent"],
+            for cond, data in zip(CONDITIONS,
                                   [cong, neut, incn]):
                 if len(data) > 0:
                     acc = sum([x.accuracy for x in data]) / len(data)
@@ -231,15 +233,24 @@ class StroopTask:
         actr.schedule_event_now("stroop-update-window")
 
 
-def run_experiment(model_name="response-monkey.lisp", time=200, verbose=True):
+def run_experiment(model_name="response-monkey.lisp",
+                   time=200,
+                   verbose=True,
+                   visible=True,
+                   trace=True,
+                   params=[]):
     """Runs an experiment"""
     actr.reset()
     # current directory
     curr_dir = os.path.dirname(os.path.realpath(__file__))
     actr.load_act_r_model(os.path.join(curr_dir, model_name))
 
+    # Set then model parameters
+    for name, val in params:
+        actr.set_parameter_value(name, val)
+    
     win = actr.open_exp_window("* STROOP TASK *", width = 800,
-                               height = 600)
+                               height = 600, visible=visible)
 
     actr.install_device(win)
 
@@ -257,6 +268,8 @@ def run_experiment(model_name="response-monkey.lisp", time=200, verbose=True):
                          "stroop-accept-response")
 
     task.setup(win)
+    if not trace:
+        actr.set_parameter_value(":V", False)
     actr.run(time)
     if verbose:
         print("-" * 80)
@@ -273,4 +286,41 @@ def run_experiment(model_name="response-monkey.lisp", time=200, verbose=True):
     
     # Returns the task as a Python object for further analysis of data
     return task
-     
+
+
+def simulate_behavior(model, params=[], n=100):
+    """Simulates N runs of the model"""
+    res = np.zeros((n, 3))
+    for j in range(n):
+        #print("Run #%03d" % j)
+        task = run_experiment(model,
+                              visible=False,
+                              verbose=False,
+                              trace=False,
+                              params=params)
+        stats = task.run_stats()
+        res[j] = np.array([stats[x][2] for x in CONDITIONS])
+
+    return res.mean(0) # Column mean
+
+
+VERSTYNEN = [0.720, 0.755, 0.810]
+
+
+def model_error(model, n=100, params=[], observed=VERSTYNEN):
+    """Loss function for the model (RMSE)"""
+    predicted = simulate_behavior(model, params, n)
+    sqerr = (predicted - observed)**2
+    return np.sqrt(np.mean(sqerr))
+
+def jim_model_error(param_values, param_names=[":BLC"]):
+    params = list(zip(param_names, param_values))
+    print(params)
+    return model_error("stroop-jim.lisp", n=50, params=params)
+
+
+# Example:
+
+#res = opt.minimize(stroop.jim_model_error, [1.5],
+#                   method='nelder-mead',
+#                   options={'disp':True}) 
