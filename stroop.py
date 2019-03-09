@@ -14,6 +14,7 @@ import os
 import actr
 import random
 import numpy as np
+import scipy.optimize as opt
 
 COLORS = ("red", "blue", "green")
 CONDITIONS = ("congruent", "neutral", "incongruent")

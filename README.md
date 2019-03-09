@@ -1,13 +1,33 @@
 # Demo ACT-R: Building a device and a model for the Stroop task
 
 This is some demo code for the ACT-R class; it shows how to build a
-simple, interactive device for an ACT-R model, and it provides
-a skeleton for a model.
+simple, interactive device for an ACT-R model, how to implement a
+simple model of a cognitively relevant paradigm (the Stroop task), and
+how to conduct simulations and model fitting through standard
+optimization algorithms.
+
+## Requirements
+
+To run this code, it is essential to have the following software
+installed:
+
+1. ACT-R, version 7.6 or higher. This is the new version of the
+architectures that neatly separates the model from the code that
+manages the experiment and collects the data.
+
+2. Python, preferably in version 3.x, although this code seems to work
+with Python 2.7.x as well. In addition to the main code, you need to
+have the following packages installed:
+
+3. Python's `numpy` and `scipy` packages, which are used for
+simulation and optimization of the model code, respectively.
+
 
 ## Device
 
 The device is written in Python using the new, JSON-RPC based
-interface for ACT-R 9 (currently in beta, coded as 7.6 or 7.x).
+on the new interface for ACT-R (currently in beta, coded as 7.6 or
+7.x).
 
 The device implements the version of the Stroop task used by Tim
 Verstynen in his 2014 paper. In this version of the Stroop, words
@@ -21,20 +41,21 @@ made of 120 trials: 42 congruent, 42 neutral, and 36 incongruent.
 The device is implemented as a Python object (`StroopTask`) that
 controls an ACT-R experimental window. The experimental window is
 ACT-R's predefined proxy for a screen, and comes with native support
-to translated GUI elements (text, images, buttons, and lines) into a
+to translate GUI elements (text, images, buttons, and lines) into a
 predefined set of ACT-R chunks.
 
-If ACT-R's Environment has been started, the window will be physically
-visible, with the stimuli appearing in order. If ACT-R is running
+If ACT-R's Environment has been started, the window can be set to
+"visible", with the stimuli appearing in order. If ACT-R is running
 without the Environment, the window will be hidden from the user (but
 still visible for the model).
 
+## Models
 
-## Model
-
-The model is a "response monkey", a basic model that simply clicks
-at random when it sees a stimulus. The model continuously performs 
-the following actions:
+This repository contains four different models. The first model is a
+simple test model designed to test and debug the interaction with the
+experimenta window. The model is called `response-monkey.lisp`, and it
+simply clicks at random when it sees a stimulus. The model
+continuously performs the following actions:
 
 1. If the model is not looking at anything, it looks for a object 
    on the screen.
@@ -49,14 +70,27 @@ the following actions:
 4. If the model is looking at a black word that reads "done", it 
    stops ACT-R using the `!stop!` command.
 
-## How to run the code
+The second model, `stroop-well.lisp`, actually performs the task
+correctly, albeit unnaturally. It possesses knowledge of the color names, 
+correctly retrievs the color name associated with each word on the
+screen, and presses the approprieta response button.
 
-Simply type the following:
+The third model, 'stroop-jim.lisp', also incorporates a simple form of
+Stroop interference.
+
+The fourth model, 'stroop-better.lisp', incorporates a more
+sophisticated form of interference in the form of alternative color
+names competing for retrieval.
+
+## Running the code
+
+All the code to run and optimize the models can be found in the
+`stroop.py` task. Simply type the following:
 
 ```
 > import stroop
 ACT-R connection has been started.
-> stroop.run_experiment(time = 200)
+> stroop.run_experiment(model = "stroop.lisp", time = 200)
      0.000   PROCEDURAL             CONFLICT-RESOLUTION
      0.050   PROCEDURAL             PRODUCTION-FIRED CHECK-THE-SCREEN
      0.050   PROCEDURAL             CLEAR-BUFFER VISUAL-LOCATION
