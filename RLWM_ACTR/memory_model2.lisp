@@ -20,7 +20,9 @@
             fproc) ;; fproc= feedback processed
     
 (chunk-type stimulus
-            picture)
+            picture
+            associate-key
+            )
     
 (chunk-type feedback
             feedback)
@@ -30,27 +32,32 @@
        isa goal
        fproc yes)
        )
+
 ;; productions
-   ;; Check memory: picture p is a variable?
+   ;; Check memory: picture cur_pic, current picture presented is a variable. 
+   ;; This is a general purpose production that just takes in whatever presented stimulus
+   ;; and checks against declarative memory in the retrieval buffer
 
 (p check-memory
     =visual>
-      picture p 
+      picture =cur_pic 
+
     ?visual>
       state free
+
     =goal>
        fproc yes
     
-    ==>
+  ==>
    ?retrieval>
       state free
    
    +retrieval> 
-      picture = p
-      outcome yes
+      picture =cur_pic
+      outcome no
    
    +imaginal>
-      picture = p
+      picture =cur_pic
 )
     
 ;; Depending on outcome: yes or no
@@ -58,7 +65,7 @@
    ;;outcome is no: make random response (3 possible)
 (p response-monkey-j
      =retrieval>
-      state error
+      outcome no
 
     ?manual>
      preparation free
@@ -102,16 +109,29 @@
     
     
    ;;outcome is yes: make response based on memory
-(p feedback-yes
+(p outcome-yes
     =retrieval> 
        outcome yes 
-      key = k
+       associate-key =k
+
     +imaginal>
-      picture =cup
+      picture =cur_pic
+    =goal>
+      fproc yes
+
    ?manual>
+     preparation free
+     processor free
+     execution free
+
    ==>
    +manual>
+      cmd punch
+      hand right
+      finger ring
 
+  *goal>
+       fproc no   
 )
 
     
@@ -119,13 +139,14 @@
     
 (p encode-feedback
     =visual>
-    feedback yes OR no
-    ?Imaginal
+    feedback =f
+    
+    ?imaginal>
     outcome nil
+    
     ==> 
     +imaginal>
-   
-    outcome = F
+    outcome =f
 )
 
 (goal-focus
@@ -133,7 +154,7 @@
  
 
 
-    
+    (set-buffer-chunk 'visual 'cup-stimulus)    
     
     )
 
