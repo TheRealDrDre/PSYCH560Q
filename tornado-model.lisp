@@ -31,6 +31,9 @@
 	word
 	)
 
+(chunk-type make-decision
+            state)
+
 ;;---------------------------------------
 ;; preload chunks
 ;;---------------------------------------
@@ -38,11 +41,13 @@
 (add-dm (first-forcast ISA stimulus color green)
 ;;create the starting goal state as look-screen
 		(first-decision ISA make-decision
-			   state look-screen)
+                        state look-screen)
+        (look-screen)
+        (encoding))
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;place stimulus in visual buffer
-(set-buffer-chunk visual first-forcast)
+(set-buffer-chunk 'visual 'first-forcast)
 
 ;; set the initial goal
 (goal-focus first-decision)
@@ -55,66 +60,66 @@
 ;; production encode-stimulus takes information from visual buffer and adds to imaginal
 (P encode-stimulus
 	=visual>
-	isa stimulus
-	forecast =cur_forecast
-	color =color1
-	number =num1 ;;how to address num2? (e.g. the "40%"" in the "25-40%") 
-	word =word1
+	  isa stimulus
+	  forecast =cur_forecast
+	  color =color1
+	  number =num1 ;;how to address num2? (e.g. the "40%"" in the "25-40%") 
+	  word =word1
 
 	?visual>
-	state free
+	  state free
 
    	?imaginal>
-   	state free
-   	buffer empty
+   	  state free
+   	  buffer empty
 
-    ?goal>
-    ISA make-decision
-    state look-screen
+    =goal>
+      ISA make-decision
+      state look-screen
 
 ==> 
-	=goal>
-	ISA 	make-decision
-	state	encoding		
+	*goal>
+	  ISA 	make-decision
+	  state	encoding		
 
    +imaginal>
-   	isa	stimulus
-   	forecast =cur_forecast
- 	color =color1
-	number =num1
-	word =word1
+   	 isa	stimulus
+   	 forecast =cur_forecast
+ 	 color =color1
+	 number =num1
+	 word =word1
    	) 
 
 ;; production translate takes info from imaginal buffer and retrieves a magnitude based on associative strength.
 (p translate
 	=imaginal>
-	isa	stimulus
-   	forecast =cur_forecast
- 	color =color1
-	number =num1
-	word =word1
+	  isa	stimulus
+   	  forecast =cur_forecast
+ 	  color =color1
+	  number =num1
+	  word =word1
 
 	?imaginal>
-   	state free
+   	  state free
 
-	?goal>
-	ISA make-decision
-	state encoding
+	=goal>
+	  ISA make-decision
+	  state encoding
 
 	?retrieval>
-    state free
-    buffer empty
+      state free
+      buffer empty
 
  ==>  
- 	=goal>
- 	ISA make-decision
- 	state translating
+ 	*goal>
+ 	  ISA make-decision
+ 	  state translating
 
-   +retrieval> 
-   	ISA magntiude
-   	color =color1
-   	number =num1
-   	word =word1
+    +retrieval> 
+      ISA magnitude
+   	  color =color1
+   	  number =num1
+   	  word =word1
    	;;let imaginal clear?
 	)
 
