@@ -24,14 +24,14 @@
 	)
 
 ;; This chunk represents a magnitude (preloaded - think of as real-world knowledge) associated with colors, numbers, and words.
-(chunk-type magnitude
+(chunk-type magnitude ;;represents a position on the gradient from 1 to 10 magnitude
 	mag
-	number 
-	color 
-	word
+	;;number 
+	;;color 
+	;;word
 	)
 
-(chunk-type make-decision
+(chunk-type make-decision ;;consider combining with first chunk type?
             state)
 
 ;;---------------------------------------
@@ -42,8 +42,9 @@
 ;;create the starting goal state as look-screen
 		(first-decision ISA make-decision
                         state look-screen)
-        (look-screen)
-        (encoding))
+        (look-screen);;must create the chunk that will be in slot of first decision (or will get a warning)
+        (encoding)
+	(translating))
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;place stimulus in visual buffer
