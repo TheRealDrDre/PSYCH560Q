@@ -35,7 +35,8 @@
 ;;; After a decision is made (and all forecasts have been seen) the interface gives a tornado outcome. Consider including point balance in this outcome for future. 
 (chunk-type outcome
 	outcome ;;y for tornado hit, n for no hit
-	point-deduct ;;should reflect points spent and penalty during this trial
+	point-bal
+	point-deduct ;;;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 	)
 	
 ;;; encode outcome and relevant situation and decision info into an instance
@@ -43,7 +44,8 @@
 	decision ;;shelter/not shelter
 	outcome ;;tornado-hit yes/no
 	mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
-	)
+	
+	    )
 	
 	    
 ;;;---------------------------------------
@@ -163,7 +165,7 @@
    	  ISA outcome
 	  outcome =o
    	  point-bal =b ;;remaining points
-	  point-deduct =d ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+	  point-deduct =d 
 
    ==>
    	;;copy to imaginal
