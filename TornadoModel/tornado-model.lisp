@@ -130,7 +130,7 @@
    
    	=imaginal>
      	  ISA magnitude
-   	  mag1 >= 2.5 ;;can i directly compute here?
+   	  mag1 >= 2.5 ;;can i directly compute here? set ranges of possible magnitudes at beginning.
    	  decision nil
    	
    	?manual>
@@ -153,7 +153,10 @@
    	  key =s
 )
 
-;;interface says outcome and point balance. copy info to imaginal to then encode into an instance.	
+	
+;;; add not shelter production
+	
+;;; interface says outcome and point balance. copy info to imaginal to then encode into an instance.	
 (p parse-outcome
    	=goal>
 	  ISA make-decision
