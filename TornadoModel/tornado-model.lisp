@@ -11,7 +11,7 @@
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
-	state ;;look-screen, encoding, translating, deciding
+	state ;;encoding; look-screen, translating, deciding, 
 	decision-made ;;yes/no. whether a decision to shelter or not shelter was made or not. "Yes" will be a requirement to begin next trial.
 	outcome-learned ;;yes/no. whether the interface has said if a tornado hit or not.
 	)
@@ -33,10 +33,16 @@
 	)
 	
 ;;; After a decision is made (and all forecasts have been seen) the interface gives a tornado outcome. Consider including point balance in this outcome for future. 
+(chunk-type outcome
+	outcome ;;y for tornado hit, n for no hit
+	point-deduct ;;should reflect points spent and penalty during this trial
+	)
+	
+;;; encode outcome and relevant situation and decision info into an instance
 (chunk-type instance
 	decision ;;shelter/not shelter
-	tornado-hit ;;yes/no
-	mag ;;should this be mag and/or the stimulus visual characteristics?
+	outcome ;;tornado-hit yes/no
+	mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
 	)
 	
 	    
@@ -61,10 +67,10 @@
 
 ;;;---------------------------------------
 ;;;productions
-;;;production names are always the root form of the verb (e.g. decide, translate). State of task will always be present participle of the production in progress (e.g. translating, deciding). 
 ;;;---------------------------------------
 
-;;; production translate takes info from visual buffer and retrieves a magnitude based on associative strength.
+;;; production translate takes info from visual buffer and retrieves a magnitude based on associative strength. 
+;;; Copies magnitude information to imaginal buffer.
 (p translate
 	=visual>
 	  isa	stimulus
@@ -104,6 +110,9 @@
    	+imaginal>
    	  ISA magnitude
    	  mag =mag1
+   	  color =color1
+   	  number =num1
+   	  word =word1
    )
 	
 ;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. n is not shelter.
@@ -141,4 +150,23 @@
      	  cmd press-key
    	  key =s
 )
+
+;;interface says outcome and point balance. copy info to imaginal to then encode into an instance.	
+(p parse-outcome
+   	=goal>
+	  ISA make-decision
+	  state deciding
+	  decision-made yes
+   	  outcome-learned no ;;need mechanism to switch this to yes
+   	
+   	=visual>
+   	  ISA outcome
+	  outcome =o
+   	  point-bal =b ;;remaining points
+	  point-deduct =d ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+
+   ==>
+   	;;copy to imaginal
+   )
 	
+	;;production to encode decision info, forecast info, and outcome info into an instance.
