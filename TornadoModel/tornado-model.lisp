@@ -11,9 +11,9 @@
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
-	state ;;encoding; look-screen, translating, deciding, 
+	state ;; encoding; look-screen, translating, deciding, collecting (i.e. collecting info from interface)
 	decision-made ;;yes/no. whether a decision to shelter or not shelter was made or not. "Yes" will be a requirement to begin next trial.
-	;;outcome-learned ;;yes/no. whether the interface has said if a tornado hit or not.
+	outcome-collected ;;yes/no. model collected info from interface
 	)
 
 ;;; stimulus chunk is information about the forecast taken from the visual buffer.
@@ -34,17 +34,17 @@
 	
 ;;; After a decision is made (and all forecasts have been seen) the interface gives a tornado outcome. Consider including point balance in this outcome for future. 
 (chunk-type outcome
-	outcome ;;y for tornado hit, n for no hit
+	outcome ;;did interface give outcome y/no
+	tornado-hit ;;y for tornado hit, n for no hit
 	point-bal
-	point-deduct ;;;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
-	)
+	   )
 	
 ;;; encode outcome and relevant situation and decision info into an instance
 (chunk-type instance
-	decision ;;shelter/not shelter
-	outcome ;;tornado-hit yes/no
+	shelter ;;y/n
+	tornado-hit ;;tornado-hit yes/no
 	mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
-	
+	point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 	    )
 	
 	    
@@ -75,7 +75,7 @@
 ;;; Copies magnitude information to imaginal buffer.
 (p translate
 	=visual>
-	  isa	stimulus
+	  ISA stimulus
    	  forecast =cur_forecast
  	  color =color1
 	  number =num1
@@ -131,7 +131,6 @@
    	=imaginal>
      	  ISA magnitude
    	  mag1 >= 2.5 ;;can i directly compute here? set ranges of possible magnitudes at beginning.
-   	  decision nil
    	
    	?manual>
      	  preparation free
@@ -141,12 +140,13 @@
    ==>  
    	*goal>
  	  ISA make-decision
- 	  state deciding
+ 	  state collecting
    	  decision-made yes
    	  outcome-learned no
    
    	*imaginal>
-    	  decision =shelter
+ 	  ISA instance
+    	  shelter yes
 
     	+manual>
      	  cmd press-key
@@ -155,24 +155,39 @@
 
 	
 ;;; add not shelter production
-	
-;;; interface says outcome and point balance. copy info to imaginal to then encode into an instance.	
-(p parse-outcome
-   	=goal>
-	  ISA make-decision
-	  state deciding
-	  decision-made yes
-   	  outcome-processed no
-   	
+
+;;;collect info from interface and copy to imaginal buffer into slots of instance
+(p encode-outcome
    	=visual>
-   	  ISA outcome
-	  outcome yes
-   	  tornado=t
-   	  point-bal =b ;;remaining points
-	  point-deduct =d 
+   	  ISA outcome  
+     	  outcome yes ;;outcome was provided
+     	  tornado hit=t
+     	  point-bal =p
+ 
+   	?visual>
+     	  state free
+
+   	=goal>
+     	  ISA make-decision
+ 	  state collecting
+     	  outcome-collected no
+   
+   	?imaginal>
+     	  state free
+     ;;buffer should have "shelter=y/n" in it from decide-s decide-ns productions
 
    ==>
-   	;;copy to imaginal
-   )
-	
-	;;production to encode decision info, forecast info, and outcome info into an instance.
+   	*imaginal>
+   	  ISA instance
+ 	  shelter =s
+	  tornado-hit =t
+	  mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
+	  point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+
+ 	*goal>
+   	  ISA make-decision
+   	  state encoding ;;set to encoding so as to allow for next trial
+   	  outcome-collected no ;;reset for new trial
+)
+
+
