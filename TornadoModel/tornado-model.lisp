@@ -11,7 +11,7 @@
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
-	state ;; encoding; look-screen, translating, deciding, collecting (i.e. collecting info from interface)
+	state ;; encoding; look-screen, translating, deciding
 	decision-made ;;yes/no. whether a decision to shelter or not shelter was made or not. "Yes" will be a requirement to begin next trial.
 	outcome-collected ;;yes/no. model collected info from interface
 	)
@@ -134,7 +134,7 @@
    
    	=imaginal>
      	  ISA magnitude
-   	  mag1 >= 2.5 ;;can i directly compute here? set ranges of possible magnitudes at beginning.
+   	  mag =mag1 >= 2.5 ;;y/n can I create a T/F test here?
    	
    	?manual>
      	  preparation free
@@ -144,7 +144,7 @@
    ==>  
    	*goal>
  	  ISA make-decision
- 	  state collecting
+ 	  state deciding
    	  decision-made yes
    	  outcome-collected no
    
@@ -170,7 +170,7 @@
    
    	=imaginal>
      	  ISA magnitude
-   	  mag1 >= 2.5 ;;can i directly compute here? set ranges of possible magnitudes at beginning.
+   	  mag =mag1 < 2.5 
    	
    	?manual>
      	  preparation free
@@ -180,20 +180,18 @@
    ==>  
    	*goal>
  	  ISA make-decision
- 	  state collecting
+ 	  state deciding
    	  decision-made yes
    	  outcome-collected no
    
    	*imaginal>
  	  ISA instance
-    	  shelter yes ;;want this to remain in imaginal buffer for next production.
+    	  shelter no ;;want this to remain in imaginal buffer for next production.
 
     	+manual>
      	  cmd press-key
    	  key =s
 )
-	
-;;; add not shelter production
 
 ;;;collect info from interface and copy to imaginal buffer into slots of instance
 
@@ -209,7 +207,7 @@
 
    	=goal>
      	  ISA make-decision
- 	  state collecting
+ 	  state deciding
      	  outcome-collected no
    
    	?imaginal>
@@ -226,7 +224,7 @@
 
  	*goal>
    	  ISA make-decision
-   	  state encoding ;;set to encoding so as to allow for next trial
+   	  state encoding;;set to encoding so as to allow for next trial
    	  outcome-collected no ;;reset for new trial
 )
 
