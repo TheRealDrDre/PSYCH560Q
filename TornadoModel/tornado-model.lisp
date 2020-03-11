@@ -13,7 +13,7 @@
 (chunk-type make-decision
 	state ;;encoding; look-screen, translating, deciding, 
 	decision-made ;;yes/no. whether a decision to shelter or not shelter was made or not. "Yes" will be a requirement to begin next trial.
-	outcome-learned ;;yes/no. whether the interface has said if a tornado hit or not.
+	;;outcome-learned ;;yes/no. whether the interface has said if a tornado hit or not.
 	)
 
 ;;; stimulus chunk is information about the forecast taken from the visual buffer.
@@ -123,7 +123,7 @@
 	  ISA make-decision
 	  state translating
 	  decision-made no
-   	  outcome-learned no
+   	  outcome-processed no
    	
    	=imaginal>
    	  state free
@@ -162,11 +162,12 @@
 	  ISA make-decision
 	  state deciding
 	  decision-made yes
-   	  outcome-learned no ;;need mechanism to switch this to yes
+   	  outcome-processed no
    	
    	=visual>
    	  ISA outcome
-	  outcome =o
+	  outcome yes
+   	  tornado=t
    	  point-bal =b ;;remaining points
 	  point-deduct =d 
 
