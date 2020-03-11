@@ -53,6 +53,7 @@
 ;;;--------------------------------------
 ;;;set stimulus chunk to green to start
 (add-dm (first-forcast ISA stimulus color green)
+	(first-outcome ISA outcome yes tornado-hit yes point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
 ;;;create the starting goal state as look-screen
 		(first-decision ISA make-decision
                         state look-screen)
@@ -62,8 +63,11 @@
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;;place stimulus in visual buffer
-(set-buffer-chunk 'visual 'first-forcast)
-
+(set-buffer-chunk 'visual '
+		  first-forcast
+		  first-outcome ;;can I add a second chunk here?
+		  )
+	
 ;;; set the initial goal
 (goal-focus first-decision)
 
@@ -157,11 +161,12 @@
 ;;; add not shelter production
 
 ;;;collect info from interface and copy to imaginal buffer into slots of instance
+
 (p encode-outcome
    	=visual>
    	  ISA outcome  
      	  outcome yes ;;outcome was provided
-     	  tornado hit=t
+     	  tornado-hit=t
      	  point-bal =p
  
    	?visual>
@@ -182,7 +187,7 @@
  	  shelter =s
 	  tornado-hit =t
 	  mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
-	  point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+	  point-deduct ;;how can I create a calculation based on pointbal of last trials? Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 
  	*goal>
    	  ISA make-decision
