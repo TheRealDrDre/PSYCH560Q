@@ -121,7 +121,7 @@
    	  word =word1
    )
 	
-;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. n is not shelter.
+;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. ns is not shelter.
 (p decide-s
 	=goal>
 	  ISA make-decision
@@ -157,6 +157,41 @@
    	  key =s
 )
 
+;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. n is not shelter.
+(p decide-ns
+	=goal>
+	  ISA make-decision
+	  state translating
+	  decision-made no
+   	  outcome-processed no
+   	
+   	=imaginal>
+   	  state free
+   
+   	=imaginal>
+     	  ISA magnitude
+   	  mag1 >= 2.5 ;;can i directly compute here? set ranges of possible magnitudes at beginning.
+   	
+   	?manual>
+     	  preparation free
+          processor   free
+    	  execution   free
+   
+   ==>  
+   	*goal>
+ 	  ISA make-decision
+ 	  state collecting
+   	  decision-made yes
+   	  outcome-learned no
+   
+   	*imaginal>
+ 	  ISA instance
+    	  shelter yes
+
+    	+manual>
+     	  cmd press-key
+   	  key =s
+)
 	
 ;;; add not shelter production
 
