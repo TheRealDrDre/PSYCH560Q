@@ -93,7 +93,7 @@
 	  ISA make-decision
 	  state encoding
    	  decision-made no
-   	  outcome-learned no
+   	  outcome-collected no
 
 	?retrieval>
       	  state free
@@ -104,7 +104,7 @@
  	  ISA make-decision
  	  state translating
    	  decision-made no
-   	  outcome-learned no
+   	  outcome-collected no
 	
    	+retrieval> 
       	  ISA magnitude
@@ -127,7 +127,7 @@
 	  ISA make-decision
 	  state translating
 	  decision-made no
-   	  outcome-processed no
+   	  outcome-collected no
    	
    	=imaginal>
    	  state free
@@ -146,7 +146,7 @@
  	  ISA make-decision
  	  state collecting
    	  decision-made yes
-   	  outcome-learned no
+   	  outcome-collected no
    
    	*imaginal>
  	  ISA instance
@@ -154,7 +154,7 @@
 
     	+manual>
      	  cmd press-key
-   	  key =s
+   	  key =s;;represent choosing shelter option
 )
 
 ;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. n is not shelter.
@@ -163,7 +163,7 @@
 	  ISA make-decision
 	  state translating
 	  decision-made no
-   	  outcome-processed no
+   	  outcome-collected no
    	
    	=imaginal>
    	  state free
@@ -182,7 +182,7 @@
  	  ISA make-decision
  	  state collecting
    	  decision-made yes
-   	  outcome-learned no
+   	  outcome-collected no
    
    	*imaginal>
  	  ISA instance
