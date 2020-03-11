@@ -186,7 +186,7 @@
    
    	*imaginal>
  	  ISA instance
-    	  shelter yes
+    	  shelter yes ;;want this to remain in imaginal buffer for next production.
 
     	+manual>
      	  cmd press-key
