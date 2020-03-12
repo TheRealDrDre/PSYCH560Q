@@ -63,9 +63,9 @@
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;;place stimulus in visual buffer
-(set-buffer-chunk 'visual '
-		  first-forcast
-		  first-outcome ;;can I add a second chunk here?
+(set-buffer-chunk 'visual
+		  'first-forcast
+		  'first-outcome ;;can I add a second chunk here?
 		  )
 	
 ;;; set the initial goal
@@ -229,3 +229,4 @@
 )
 
 
+)
