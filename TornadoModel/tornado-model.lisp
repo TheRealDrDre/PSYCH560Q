@@ -5,9 +5,23 @@
 
 ;;; SET PARAMETERS
 
+(sgp :er t
+     :esc t
+     :act nil
+     :bll 0.5
+     :ans 0.1
+     :sji-hook "sji_calculation"
+     ;;:sji-hook sji-calc
+     :visual-activation 5.0
+     :mas 10)
+  
 ;;;---------------------------------------
 ;;; chunk types
 ;;;---------------------------------------
+
+(defun sji-calc (a b)
+  (print (list a b))
+  0.0)
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
@@ -26,7 +40,8 @@
 
 ;;; This chunk represents a magnitude (preloaded - think of as real-world knowledge) associated with colors, numbers, and words.
 (chunk-type magnitude ;;represents a position on the gradient from 1 to 10 magnitude
-	mag
+    mag
+    kind
 	;;number 
 	;;color 
 	;;word
@@ -49,7 +64,7 @@
             mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
             point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 	    )
-	
+
 	    
 ;;;---------------------------------------
 ;;; preload chunks
@@ -59,15 +74,21 @@
         (deciding)
         (encoding)
         (translating)
+        (void)
         (first-forcast ISA stimulus
-                       color green)
+                       color green
+                       number void
+                       forecast void
+                       word void)
         (first-outcome ISA outcome
                        outcome yes
                        tornado-hit yes
                        point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
 ;;;create the starting goal state as look-screen
 		(first-decision ISA make-decision
-                        state look-screen)
+                        state encoding
+                        decision-made no
+                        outcome-collected no)
         (look-screen);;must create the chunk that will be in slot of first decision (or will get a warning)
         )
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
@@ -75,9 +96,9 @@
 ;;;place stimulus in visual buffer
 (set-buffer-chunk 'visual
 		  'first-forcast
-		  'first-outcome ;;can I add a second chunk here?
+		  ;;'first-outcome ;;can I add a second chunk here?  NO
 		  )
-	
+
 ;;; set the initial goal
 (goal-focus first-decision)
 
@@ -130,6 +151,8 @@
    	  color  =color1
    	  number =num1
    	  word   =word1
+
+    =visual>
    )
 	
 ;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. ns is not shelter.
