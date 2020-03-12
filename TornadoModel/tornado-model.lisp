@@ -27,9 +27,9 @@
 ;;; This chunk represents a magnitude (preloaded - think of as real-world knowledge) associated with colors, numbers, and words.
 (chunk-type magnitude ;;represents a position on the gradient from 1 to 10 magnitude
 	mag
-	number 
-	color 
-	word
+	;;number 
+	;;color 
+	;;word
 	)
 	
 ;;; After a decision is made (and all forecasts have been seen) the interface gives a tornado outcome. Consider including point balance in this outcome for future. 
@@ -37,14 +37,17 @@
 	outcome ;;did interface give outcome y/no
 	tornado-hit ;;y for tornado hit, n for no hit
 	point-bal
-	   )
+    )
 	
 ;;; encode outcome and relevant situation and decision info into an instance
 (chunk-type instance
-	shelter ;;y/n
-	tornado-hit ;;tornado-hit yes/no
-	mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
-	point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+            color
+            word
+            number
+            shelter ;;y/n
+            tornado-hit ;;tornado-hit yes/no
+            mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
+            point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 	    )
 	
 	    
@@ -52,14 +55,21 @@
 ;;; preload chunks
 ;;;--------------------------------------
 ;;;set stimulus chunk to green to start
-(add-dm (first-forcast ISA stimulus color green)
-	(first-outcome ISA outcome yes tornado-hit yes point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
+(add-dm (yes) (no)
+        (deciding)
+        (encoding)
+        (translating)
+        (first-forcast ISA stimulus
+                       color green)
+        (first-outcome ISA outcome
+                       outcome yes
+                       tornado-hit yes
+                       point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
 ;;;create the starting goal state as look-screen
 		(first-decision ISA make-decision
                         state look-screen)
         (look-screen);;must create the chunk that will be in slot of first decision (or will get a warning)
-        (encoding)
-	(translating))
+        )
 		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;;place stimulus in visual buffer
@@ -79,46 +89,47 @@
 ;;; Copies magnitude information to imaginal buffer.
 (p translate
 	=visual>
-	  ISA stimulus
+	  ISA       stimulus
    	  forecast =cur_forecast
- 	  color =color1
-	  number =num1
-	  word =word1
+ 	  color    =color1
+	  number   =num1
+	  word     =word1
 
 	?imaginal>
-   	  state free
+   	  state  free
    	  buffer empty
 
 	=goal>
-	  ISA make-decision
-	  state encoding
-   	  decision-made no
+	  ISA               make-decision
+	  state             encoding
+   	  decision-made     no
    	  outcome-collected no
 
 	?retrieval>
-      	  state free
-     	  buffer empty
+      state  free
+      buffer empty
 
  ==>  
  	*goal>
- 	  ISA make-decision
- 	  state translating
-   	  decision-made no
+ 	  ISA               make-decision
+ 	  state             translating
+   	  decision-made     no
    	  outcome-collected no
 	
    	+retrieval> 
-      	  ISA magnitude
-   	  mag =mag1
-   	  color =color1
-   	  number =num1
-   	  word =word1
+      ISA magnitude
+    - mag nil
+   	  ;; mag    =mag1      ;; There is no Mag1 in the Condition
+   	  ;;color  =color1
+   	  ;;number =num1
+   	  ;;word   =word1
 	
    	+imaginal>
-   	  ISA magnitude
-   	  mag =mag1
-   	  color =color1
+   	  ISA    instance
+   	  ;; mag    =mag1
+   	  color  =color1
    	  number =num1
-   	  word =word1
+   	  word   =word1
    )
 	
 ;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. ns is not shelter.
@@ -129,32 +140,37 @@
 	  decision-made no
    	  outcome-collected no
    	
-   	=imaginal>
-   	  state free
-   
-   	=imaginal>
-     	  ISA magnitude
-   	  mag =mag1 >= 2.5 ;;y/n can I create a T/F test here?
+   	;;?imaginal>
+   	;;  state free
+
+    ?retrieval>
+      state free
+    
+   	=retrieval>
+      ISA magnitude
+   	> mag  2.5 ;;y/n can I create a T/F test here?
    	
    	?manual>
-     	  preparation free
-          processor   free
-    	  execution   free
+      preparation free
+      processor   free
+      execution   free
    
-   ==>  
+ ==>
+      
    	*goal>
  	  ISA make-decision
  	  state deciding
    	  decision-made yes
    	  outcome-collected no
    
-   	*imaginal>
- 	  ISA instance
-    	  shelter yes
+   	;;*imaginal>
+ 	;;  ISA instance
+    ;;  shelter yes
 
-    	+manual>
-     	  cmd press-key
-   	  key =s;;represent choosing shelter option
+   
+    +manual>
+      cmd press-key
+   	  key s ;;represent choosing shelter option
 )
 
 ;;; productions take magnitude and make decision based on shelter/not shelter threshold. s is Shelter. n is not shelter.
@@ -165,17 +181,20 @@
 	  decision-made no
    	  outcome-collected no
    	
-   	=imaginal>
-   	  state free
-   
-   	=imaginal>
-     	  ISA magnitude
-   	  mag =mag1 < 2.5 
+   	;;?imaginal>
+   	;;  state free
+
+    ?retrieval>
+      state free  
+      
+   	=retrieval>
+      ISA magnitude
+   	< mag 2.5 
    	
    	?manual>
-     	  preparation free
-          processor   free
-    	  execution   free
+      preparation free
+      processor   free
+      execution   free
    
    ==>  
    	*goal>
@@ -184,49 +203,51 @@
    	  decision-made yes
    	  outcome-collected no
    
-   	*imaginal>
- 	  ISA instance
-    	  shelter no ;;want this to remain in imaginal buffer for next production.
+   	;;*imaginal>
+ 	;;  ISA instance
+    ;;  shelter no ;;want this to remain in imaginal buffer for next production.
 
-    	+manual>
-     	  cmd press-key
-   	  key =s
+    +manual>
+      cmd press-key
+   	  key n
 )
 
 ;;;collect info from interface and copy to imaginal buffer into slots of instance
 
-(p encode-outcome
+#|(p encode-outcome
    	=visual>
    	  ISA outcome  
-     	  outcome yes ;;outcome was provided
-     	  tornado-hit=t
-     	  point-bal =p
+      outcome yes ;;outcome was provided
+      tornado-hit =t
+      point-bal   =p
  
    	?visual>
-     	  state free
+      state free
 
    	=goal>
-     	  ISA make-decision
+      ISA make-decision
  	  state deciding
-     	  outcome-collected no
+      outcome-collected no
    
    	?imaginal>
-     	  state free
+      state free
+
+    =imaginal>
+    - shelter nil  
      ;;buffer should have "shelter=y/n" in it from decide-s decide-ns productions
 
    ==>
    	*imaginal>
    	  ISA instance
- 	  shelter =s
 	  tornado-hit =t
-	  mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
-	  point-deduct ;;how can I create a calculation based on pointbal of last trials? Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
+	  ;;mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
+	  point-deduct =p;;how can I create a calculation based on pointbal of last trials? Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 
  	*goal>
    	  ISA make-decision
    	  state encoding;;set to encoding so as to allow for next trial
    	  outcome-collected no ;;reset for new trial
 )
-
+|#
 
 )
