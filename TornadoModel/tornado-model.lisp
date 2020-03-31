@@ -1,3 +1,19 @@
+;; REFERENCE -----------
+;sji command used to specify sji valeus between chunks. Example: (add-sji (a b 2.5) (b a 10)) (2.5 10)
+
+;add-sji (chunk-name-j chunk-name-i sji)* -> ([sji | :error]*) what is this for?
+
+;sji hook parameter - allows one to override the strength of association calculation. If it is set to a function
+	;then that function will be passed two parameters. The first will be the chunk j from a slot in a buffer
+	;chunk and the second will be the considered chunk i. If the function returns a number that will be the
+	;Sji value used in the equation of Si for the chunk i. If the function returns nil or a non-numeric value
+	;the default Sji value will be used.
+
+;:mas - maximum associative strength parameter controls whether the spreading activation calculation is used, 
+	;and if so, what the S value in the Sji calculations will be. It can be set to any number or the value nil. 
+	;The value nil means do not use spreading activation and is the default value, any number means that spreading
+	;activation is enabled.
+
 ;;;tornado model
 (clear-all)
 
@@ -13,7 +29,8 @@
      :sji-hook "sji_calculation"
      ;;:sji-hook sji-calc
      :visual-activation 5.0
-     :mas 10)
+     :mas 10) ;in function Andrea used numbers up to 100
+	
   
 ;;;---------------------------------------
 ;;; chunk types
