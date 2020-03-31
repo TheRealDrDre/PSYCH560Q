@@ -29,7 +29,7 @@
      :sji-hook "sji_calculation"
      ;;:sji-hook sji-calc
      :visual-activation 5.0
-     :mas 10) ;in function Andrea used numbers up to 100
+     :mas 10)
 	
   
 ;;;---------------------------------------
