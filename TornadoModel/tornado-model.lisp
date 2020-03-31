@@ -12,7 +12,7 @@
 ;:mas - maximum associative strength parameter controls whether the spreading activation calculation is used, 
 	;and if so, what the S value in the Sji calculations will be. It can be set to any number or the value nil. 
 	;The value nil means do not use spreading activation and is the default value, any number means that spreading
-	;activation is enabled.
+	;activation is enabled. IS THERE A CEILING? 100?
 
 ;;;tornado model
 (clear-all)
