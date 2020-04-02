@@ -21,15 +21,15 @@
 
 ;;; SET PARAMETERS
 
-(sgp :er t
-     :esc t
-     :act nil
-     :bll 0.5
-     :ans 0.1
-     :sji-hook "sji_calculation"
+(sgp :er t ;;enable randomness parameter
+     :esc t ;;enable subsymbolic computations parameter.
+     :act nil ;;?
+     :bll 0.5 ;;base-level learning parameter controls whether base-level learning is enabled, and also sets the value of the decay parameter, d
+     :ans 0.1 ;;activation noise s parameter specifies the s value used to generate the instantaneous noise added to the activation equation if it is set to a positive number.
+     :sji-hook "sji_calculation" ;;allows one to override the strength of association calculation
      ;;:sji-hook sji-calc
-     :visual-activation 5.0
-     :mas 10)
+     :visual-activation 5.0 ;;Activation spread parameter
+     :mas 10) ;;what the S value in the Sji calculations will be. 
 	
   
 ;;;---------------------------------------
