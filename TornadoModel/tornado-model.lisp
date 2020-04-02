@@ -42,7 +42,7 @@
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
-	state ;; encoding; look-screen, translating, deciding
+	state ;; encoding; look-screen (don't think I need this right now), translating, deciding
 	decision-made ;;yes/no. whether a decision to shelter or not shelter was made or not. "Yes" will be a requirement to begin next trial.
 	outcome-collected ;;yes/no. model collected info from interface
 	)
@@ -58,10 +58,7 @@
 ;;; This chunk represents a magnitude (preloaded - think of as real-world knowledge) associated with colors, numbers, and words.
 (chunk-type magnitude ;;represents a position on the gradient from 1 to 10 magnitude
     mag
-    kind
-	;;number 
-	;;color 
-	;;word
+    kind ;;whether this is a magnitude or not
 	)
 	
 ;;; After a decision is made (and all forecasts have been seen) the interface gives a tornado outcome. Consider including point balance in this outcome for future. 
@@ -78,7 +75,7 @@
             number
             shelter ;;y/n
             tornado-hit ;;tornado-hit yes/no
-            mag ;;should this be mag and/or the stimulus visual characteristics? Want to allow program to eventually find shortcut of color to decision rule.
+            mag
             point-deduct ;;Reflects points spent and lost (penalty) during this trial. Calcualted via point balance of last trial minus point-bal of this trial.
 	    )
 
@@ -93,7 +90,7 @@
         (translating)
         (void)
         (first-forcast ISA stimulus
-                       color green
+                       color orange
                        number void
                        forecast void
                        word void)
@@ -101,19 +98,17 @@
                        outcome yes
                        tornado-hit yes
                        point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
-;;;create the starting goal state as look-screen
-		(first-decision ISA make-decision
+;;;create the starting goal state as encoding
+	(first-decision ISA make-decision
                         state encoding
                         decision-made no
                         outcome-collected no)
-        (look-screen);;must create the chunk that will be in slot of first decision (or will get a warning)
+        (encoding);;must create the chunk that will be in slot of first decision (or will get a warning)
         )
-		;;(mag-green-hi ISA magnitude color green mag 3)) ;;considering making 2 or three chunks per color (hi, med, weak strength)? 
 
 ;;;place stimulus in visual buffer
 (set-buffer-chunk 'visual
 		  'first-forcast
-		  ;;'first-outcome ;;can I add a second chunk here?  NO
 		  )
 
 ;;; set the initial goal
@@ -157,10 +152,6 @@
    	+retrieval> 
       ISA magnitude
     - mag nil
-   	  ;; mag    =mag1      ;; There is no Mag1 in the Condition
-   	  ;;color  =color1
-   	  ;;number =num1
-   	  ;;word   =word1
 	
    	+imaginal>
    	  ISA    instance
@@ -179,16 +170,14 @@
 	  state translating
 	  decision-made no
    	  outcome-collected no
-   	
-   	;;?imaginal>
-   	;;  state free
+  
 
     ?retrieval>
       state free
     
    	=retrieval>
       ISA magnitude
-   	> mag  2.5 ;;y/n can I create a T/F test here?
+   	> mag  24.5
    	
    	?manual>
       preparation free
@@ -202,10 +191,6 @@
  	  state deciding
    	  decision-made yes
    	  outcome-collected no
-   
-   	;;*imaginal>
- 	;;  ISA instance
-    ;;  shelter yes
 
    
     +manual>
@@ -220,16 +205,13 @@
 	  state translating
 	  decision-made no
    	  outcome-collected no
-   	
-   	;;?imaginal>
-   	;;  state free
 
     ?retrieval>
       state free  
       
    	=retrieval>
       ISA magnitude
-   	< mag 2.5 
+   	< mag 24.5
    	
    	?manual>
       preparation free
@@ -242,10 +224,6 @@
  	  state deciding
    	  decision-made yes
    	  outcome-collected no
-   
-   	;;*imaginal>
- 	;;  ISA instance
-    ;;  shelter no ;;want this to remain in imaginal buffer for next production.
 
     +manual>
       cmd press-key
