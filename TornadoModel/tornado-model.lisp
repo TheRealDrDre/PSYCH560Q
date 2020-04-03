@@ -27,7 +27,6 @@
      :bll 0.5 ;;base-level learning parameter controls whether base-level learning is enabled, and also sets the value of the decay parameter, d
      :ans 0.1 ;;activation noise s parameter specifies the s value used to generate the instantaneous noise added to the activation equation if it is set to a positive number.
      :sji-hook "sji_calculation" ;;allows one to override the strength of association calculation
-     ;;:sji-hook sji-calc
      :visual-activation 5.0 ;;Activation spread parameter
      :mas 10) ;;what the S value in the Sji calculations will be. 
 	
@@ -36,9 +35,6 @@
 ;;; chunk types
 ;;;---------------------------------------
 
-(defun sji-calc (a b)
-  (print (list a b))
-  0.0)
 
 ;;; Chunk to keep track of task in goal module.
 (chunk-type make-decision
@@ -89,6 +85,7 @@
         (encoding)
         (translating)
         (void)
+       
         (first-forcast ISA stimulus
                        color orange
                        number void
@@ -99,11 +96,12 @@
                        tornado-hit yes
                        point-bal 23697) ;;24000 minus cost of shelter 303 (no penalty)
 ;;;create the starting goal state as encoding
+        
+        
 	(first-decision ISA make-decision
                         state encoding
                         decision-made no
                         outcome-collected no)
-        (encoding);;must create the chunk that will be in slot of first decision (or will get a warning)
         )
 
 ;;;place stimulus in visual buffer
@@ -151,7 +149,7 @@
 	
    	+retrieval> 
       ISA magnitude
-    - mag nil
+        - mag nil
 	
    	+imaginal>
    	  ISA    instance
