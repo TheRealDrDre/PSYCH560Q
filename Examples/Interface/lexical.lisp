@@ -13,7 +13,7 @@
                plural regular)
         )
     
-(p find-word
+(p look-at-string
    ?visual>
      state free
      buffer empty
@@ -22,7 +22,7 @@
      kind text
 )
     
-(p decide-word
+(p decide
    =visual>
      text   t
      value =TEXT
@@ -39,5 +39,38 @@
      ISA   word
      form =TEXT
 )
-        
+ 
+(p respond-word
+   ?retrieval>
+      state free
+      buffer full
+   
+   ?manual>
+      preparation free
+      processor free
+      execution free
+   
+==>
+   
+   +manual>
+      isa punch
+      hand left
+      finger index)
+    
+(p respond-nonword
+   ?retrieval>
+      state error
+   
+   ?manual>
+      preparation free
+      processor free
+      execution free
+   
+==>
+   
+   +manual>
+      isa punch
+      hand right
+      finger index)
+    
 ); End of model
