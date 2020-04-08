@@ -1,22 +1,22 @@
 (clear-all)
-(define-model lexical
+(define-model stimulus
 
 (sgp :auto-attend t)
 
 (chunk-type concept name class natural manmade living)
-(chunk-type picture kind object style screen-x screen-y width height color)
-(chunk-type picture-location screen-x screen-y width height kind)
+(chunk-type (image-object (:include visual-object)) content style)
+(chunk-type (image-location (:include visual-location)) style)
     
 (add-dm (yes) (no)
         (black-and-white) (color)
         (photo) (linedrawing)
-        (animal)
-        (zebra ISA concept 
-               name "zebra"
-               class animal
-               natural yes
-               manmade no
-               living yes)
+        (animal) (image) (zebra)
+        (zebra-concept ISA concept 
+                       name zebra
+                       class animal
+                       natural yes
+                       manmade no
+                       living yes)
         )
     
 (p find-picture
@@ -25,13 +25,13 @@
      buffer empty
 ==>
    +visual-location>
-     kind picture
+     kind image
 )
     
-(p decide-word
+(p decide
    =visual>
-     text   t
-     value =TEXT
+     ISA image-object
+     content =OBJ
    
    ?visual>
      state free
@@ -41,9 +41,49 @@
      buffer empty
 
 ==>
+   =visual>
    +retrieval>
-     ISA   word
-     form =TEXT
+     ISA   concept
+     name =OBJ
 )
         
+(p respond-natural
+   ?retrieval>
+      state free
+      buffer full
+   
+   ?manual>
+      preparation free
+      processor free
+      execution free
+   
+   =retrieval>
+      natural yes
+==>
+   
+   +manual>
+      isa punch
+      hand left
+      finger index)
+    
+(p respond-manmade
+   ?retrieval>
+      state free
+      buffer full
+   
+   ?manual>
+      preparation free
+      processor free
+      execution free
+   
+   =retrieval>
+      ISA concept
+      manmade yes
+==>
+   
+   +manual>
+      isa punch
+      hand right
+      finger index)
+
 ); End of model
