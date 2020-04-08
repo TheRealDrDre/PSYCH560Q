@@ -38,6 +38,8 @@
    +retrieval>
      ISA   word
      form =TEXT
+   
+   =visual>
 )
  
 (p respond-word
