@@ -20,6 +20,7 @@
         )
     
 (p find-picture
+   "Finds a picture in the visual field"
    ?visual>
      state free
      buffer empty
@@ -29,6 +30,7 @@
 )
     
 (p decide
+   "Retrieves the concept associated with the picture"
    =visual>
      ISA image-object
      content =OBJ
@@ -48,6 +50,7 @@
 )
         
 (p respond-natural
+   "if the concept is a natural object, respond with left index finger"
    ?retrieval>
       state free
       buffer full
@@ -67,6 +70,7 @@
       finger index)
     
 (p respond-manmade
+   "If the concept is an artificial object, respond with right index finger"
    ?retrieval>
       state free
       buffer full

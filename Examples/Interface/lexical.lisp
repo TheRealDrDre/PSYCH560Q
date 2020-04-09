@@ -2,10 +2,13 @@
 (define-model lexical
 
 (sgp :auto-attend t)
+    
 (chunk-type word form meaning class plural)
+    
 (add-dm (regular isa chunk)
         (zebra-animal isa chunk)
         (noun isa chunk)
+        
         (zebra isa word
                form "zebra"
                meaning zebra-animal
@@ -14,6 +17,7 @@
         )
     
 (p look-at-string
+   "Find a string of characters on the screen"
    ?visual>
      state free
      buffer empty
@@ -23,6 +27,7 @@
 )
     
 (p decide
+   "Decides whether the string is a word by attempting to retrieve it"
    =visual>
      text   t
      value =TEXT
@@ -43,6 +48,7 @@
 )
  
 (p respond-word
+   "If the string is a word, press the left index finger"
    ?retrieval>
       state free
       buffer full
@@ -60,6 +66,7 @@
       finger index)
     
 (p respond-nonword
+   "If no word exists that matches the string, press the right index finger"
    ?retrieval>
       state error
    
