@@ -1,6 +1,10 @@
 # cache
 *__pycache__
 
+# jupyter checkpoint files
+# cache
+*.ipynb_checkpoints
+
 # vim temp file
 *.swp
 
