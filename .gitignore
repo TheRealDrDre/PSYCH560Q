@@ -6,3 +6,6 @@
 
 # emacs temp file
 *~
+
+# Python compiled files
+*.pyc
